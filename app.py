@@ -6,8 +6,8 @@ import os
 
 app = FastAPI()
 
-UPLOAD_DIR = "temp_files"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+import tempfile
+UPLOAD_DIR = tempfile.gettempdir()
 
 # In-memory store: token -> (filepath, expiry_time)
 file_store = {}
@@ -25,7 +25,7 @@ def home():
 async def upload_file(file: UploadFile = File(...)):
     try:
         file_id = str(uuid.uuid4())
-        filepath = os.path.join(UPLOAD_DIR, file_id + "_" + file.filename)
+        filepath = os.path.join(UPLOAD_DIR, file_id)
 
         with open(filepath, "wb") as f:
             f.write(await file.read())
